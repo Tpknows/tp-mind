@@ -142,7 +142,19 @@
   .module-bus .jname{
     font-family:var(--font-mono); font-size:12px; font-weight:700; letter-spacing:0.08em;
     color:var(--teal); text-transform:uppercase;
+    cursor:pointer; padding:2px 4px; margin:-2px -4px; border-radius:3px;
+    border:1px solid transparent;
   }
+  .module-bus .jname:hover{ border-color:var(--line-bright); background:rgba(61,220,200,0.06); }
+  .module-bus .jname:focus{
+    outline:none; border-color:var(--teal); background:var(--bg);
+    color:var(--text); cursor:text;
+  }
+  .module-bus .jedit-hint{
+    font-family:var(--font-mono); font-size:9px; color:var(--text-faint);
+    letter-spacing:0.04em; opacity:0; transition:opacity .15s;
+  }
+  .module-bus:hover .jedit-hint{ opacity:1; }
   .module-bus .jcount{
     font-family:var(--font-mono); font-size:10px; color:var(--text-faint);
     margin-left:auto; letter-spacing:0.04em;
@@ -196,6 +208,14 @@
   }
   .chip:hover .remove-x{ display:flex; }
   .chip .remove-x:hover{ border-color:var(--red); color:var(--red); }
+  .chip .edit-btn{
+    position:absolute; top:8px; right:32px; width:18px; height:18px;
+    display:none; align-items:center; justify-content:center;
+    background:var(--bg); border:1px solid var(--line-bright); border-radius:50%;
+    color:var(--text-faint); font-size:10px; cursor:pointer; z-index:5;
+  }
+  .chip:hover .edit-btn{ display:flex; }
+  .chip .edit-btn:hover{ border-color:var(--teal); color:var(--teal); }
 
   .empty-state{
     text-align:center; padding:48px 20px; color:var(--text-faint);
@@ -291,8 +311,8 @@
 
 <div class="overlay" id="overlay">
   <div class="panel">
-    <h2>Install new component</h2>
-    <div class="hint">// add a site, dashboard, or tool to the board</div>
+    <h2 id="panelTitle">Install new component</h2>
+    <div class="hint" id="panelHint">// add a site, dashboard, or tool to the board</div>
     <div class="field">
       <label>Name</label>
       <input type="text" id="f-name" placeholder="e.g. Tune Playerr">
@@ -356,6 +376,7 @@
   let searchTerm = "";
   let undoData = null;
   let undoTimer = null;
+  let editingIndex = null;
 
   const rack = document.getElementById("rack");
   const overlay = document.getElementById("overlay");
@@ -395,7 +416,8 @@
       mod.innerHTML = `
         <div class="module-bus">
           <span class="jack"></span>
-          <span class="jname">${catName}</span>
+          <span class="jname" contenteditable="true" spellcheck="false" data-original="${catName}">${catName}</span>
+          <span class="jedit-hint">// click to rename</span>
           <span class="jcount">${items.length} node${items.length > 1 ? "s" : ""}</span>
         </div>
         <div class="module-grid"></div>
@@ -407,6 +429,7 @@
         chip.className = "chip";
         const pins = Array.from({length: pinCount(items.length)}).map(() => "<span></span>").join("");
         chip.innerHTML = `
+          <div class="edit-btn" title="Edit">✎</div>
           <div class="remove-x" title="Remove">×</div>
           <div class="chip-top">
             <h3>${c.name}</h3>
@@ -420,8 +443,12 @@
           <div class="pins">${pins}</div>
         `;
         chip.addEventListener("click", (e) => {
-          if(e.target.closest(".remove-x")) return;
+          if(e.target.closest(".remove-x") || e.target.closest(".edit-btn")) return;
           window.open(c.url, "_blank", "noopener");
+        });
+        chip.querySelector(".edit-btn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          openEditForm(components.indexOf(c));
         });
         chip.querySelector(".remove-x").addEventListener("click", (e) => {
           e.stopPropagation();
@@ -433,6 +460,24 @@
           showToast(`Removed "${c.name}"`);
         });
         grid.appendChild(chip);
+      });
+
+      const jnameEl = mod.querySelector(".jname");
+      jnameEl.addEventListener("keydown", (e) => {
+        if(e.key === "Enter"){ e.preventDefault(); jnameEl.blur(); }
+        if(e.key === "Escape"){ e.preventDefault(); jnameEl.textContent = jnameEl.dataset.original; jnameEl.blur(); }
+      });
+      jnameEl.addEventListener("blur", () => {
+        const newName = jnameEl.textContent.trim();
+        const oldName = jnameEl.dataset.original;
+        if(!newName || newName === oldName){
+          jnameEl.textContent = oldName;
+          return;
+        }
+        components.forEach(c => { if(c.category === oldName) c.category = newName; });
+        saveComponents();
+        render();
+        showToast(`Renamed "${oldName}" → "${newName}"`, false);
       });
 
       rack.appendChild(mod);
@@ -460,9 +505,11 @@
     document.getElementById("specBranches").textContent = branchCount;
   }
 
-  function showToast(msg){
+  function showToast(msg, withUndo = true){
     const toast = document.getElementById("toast");
     document.getElementById("toastMsg").textContent = msg;
+    document.getElementById("toastUndo").style.display = withUndo ? "inline-block" : "none";
+    if(!withUndo) undoData = null;
     toast.classList.add("show");
     clearTimeout(undoTimer);
     undoTimer = setTimeout(() => { toast.classList.remove("show"); undoData = null; }, 6000);
@@ -492,9 +539,32 @@
     render();
   });
 
-  document.getElementById("addSlot").addEventListener("click", () => overlay.classList.add("open"));
-  document.getElementById("cancelBtn").addEventListener("click", () => overlay.classList.remove("open"));
-  overlay.addEventListener("click", (e) => { if(e.target === overlay) overlay.classList.remove("open"); });
+  function openEditForm(index){
+    editingIndex = index;
+    const c = components[index];
+    document.getElementById("f-name").value = c.name;
+    document.getElementById("f-url").value = c.url;
+    document.getElementById("f-category").value = c.category;
+    document.getElementById("f-status").value = c.status;
+    document.getElementById("f-desc").value = c.desc || "";
+    document.getElementById("panelTitle").textContent = "Edit component";
+    document.getElementById("panelHint").textContent = "// change any field, including its branch";
+    document.getElementById("saveBtn").textContent = "Save changes";
+    overlay.classList.add("open");
+  }
+
+  function resetForm(){
+    editingIndex = null;
+    ["f-name","f-url","f-category","f-desc"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("f-status").value = "live";
+    document.getElementById("panelTitle").textContent = "Install new component";
+    document.getElementById("panelHint").textContent = "// add a site, dashboard, or tool to the board";
+    document.getElementById("saveBtn").textContent = "Add to board";
+  }
+
+  document.getElementById("addSlot").addEventListener("click", () => { resetForm(); overlay.classList.add("open"); });
+  document.getElementById("cancelBtn").addEventListener("click", () => { overlay.classList.remove("open"); resetForm(); });
+  overlay.addEventListener("click", (e) => { if(e.target === overlay){ overlay.classList.remove("open"); resetForm(); } });
 
   document.getElementById("saveBtn").addEventListener("click", () => {
     const name = document.getElementById("f-name").value.trim();
@@ -504,12 +574,16 @@
     const desc = document.getElementById("f-desc").value.trim();
     if(!name || !url) return;
 
-    components.push({ name, url, category, status, desc });
+    if(editingIndex !== null){
+      components[editingIndex] = { name, url, category, status, desc };
+      showToast(`Updated "${name}"`, false);
+    }else{
+      components.push({ name, url, category, status, desc });
+    }
     saveComponents();
     render();
-
-    ["f-name","f-url","f-category","f-desc"].forEach(id => document.getElementById(id).value = "");
     overlay.classList.remove("open");
+    resetForm();
   });
 
   render();
