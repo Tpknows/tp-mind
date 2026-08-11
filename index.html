@@ -126,14 +126,18 @@
     background:
       radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1.2px) 0 0/22px 22px,
       var(--bg-panel);
-    overflow:auto;
-    max-height:600px;
+    overflow:hidden;
+    width:100%;
+    height:min(62vh, 560px);
+    min-height:340px;
     margin-bottom:28px;
   }
   .mindmap-canvas{
-    position:relative;
+    position:absolute;
+    top:0; left:0;
     width:1320px;
     height:860px;
+    transform-origin:0 0;
   }
 
   .mm-node{
@@ -263,7 +267,7 @@
   }
 
   @media (max-width:640px){
-    .mindmap-wrap{ max-height:440px; }
+    .mindmap-wrap{ height:min(50vh, 420px); min-height:300px; }
   }
 </style>
 </head>
@@ -437,6 +441,27 @@
     svg.appendChild(path);
   }
 
+  function fitView(){
+    const nodes = document.querySelectorAll(".mm-node");
+    if(!nodes.length) return;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    nodes.forEach(el => {
+      const x = parseFloat(el.style.left), y = parseFloat(el.style.top);
+      const w = el.offsetWidth, h = el.offsetHeight;
+      minX = Math.min(minX, x); minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x + w); maxY = Math.max(maxY, y + h);
+    });
+    const pad = 46;
+    minX -= pad; minY -= pad; maxX += pad; maxY += pad;
+    const contentW = maxX - minX, contentH = maxY - minY;
+    const wrapW = wrap.clientWidth, wrapH = wrap.clientHeight;
+    if(!wrapW || !wrapH || !contentW || !contentH) return;
+    const scale = Math.min(wrapW / contentW, wrapH / contentH, 1.35);
+    const translateX = (wrapW - contentW * scale) / 2 - minX * scale;
+    const translateY = (wrapH - contentH * scale) / 2 - minY * scale;
+    canvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  }
+
   function redrawLines(){
     svg.innerHTML = "";
     const centerEl = document.getElementById("mmCenter");
@@ -491,6 +516,8 @@
       if(moved){
         positions[el.dataset.id] = { x: parseFloat(el.style.left), y: parseFloat(el.style.top) };
         savePositions(positions);
+        fitView();
+        redrawLines();
       } else {
         const url = el.dataset.url;
         if(url) window.open(url, "_blank", "noopener");
@@ -605,6 +632,7 @@
 
     populateCategoryList(catOrder);
     redrawLines();
+    fitView();
     updateStatus(catOrder.length);
   }
 
@@ -640,10 +668,7 @@
 
   render();
 
-  wrap.scrollLeft = (CW - wrap.clientWidth) / 2;
-  wrap.scrollTop = (CH - wrap.clientHeight) / 2;
-
-  window.addEventListener("resize", redrawLines);
+  window.addEventListener("resize", () => { fitView(); redrawLines(); });
 
   document.getElementById("flashDate").textContent = new Date().getFullYear();
 
