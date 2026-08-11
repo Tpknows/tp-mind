@@ -8,216 +8,208 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#101319;
-    --bg-panel:#161B24;
-    --bg-card:#1A2029;
-    --line:#2A3240;
-    --line-bright:#3A4557;
+    --bg:#0B0F14;
+    --bg-panel:#10151C;
+    --bg-card:#151B23;
+    --line:#212B36;
+    --line-bright:#374252;
     --copper:#E8A33D;
     --copper-dim:#8C6A2E;
     --teal:#3DDCC8;
-    --red:#E85D5D;
+    --red:#E86A5D;
     --text:#EDEAE1;
     --text-dim:#8891A0;
-    --text-faint:#565F6E;
+    --text-faint:#4E5867;
     --font-display:'Space Grotesk', sans-serif;
     --font-mono:'JetBrains Mono', monospace;
   }
-
   *{ margin:0; padding:0; box-sizing:border-box; }
+  ::selection{ background:var(--copper); color:#0B0F14; }
 
   body{
     background:
-      radial-gradient(ellipse at 20% -10%, rgba(232,163,61,0.08), transparent 45%),
-      radial-gradient(ellipse at 90% 10%, rgba(61,220,200,0.06), transparent 40%),
+      radial-gradient(ellipse at 15% -10%, rgba(232,163,61,0.07), transparent 45%),
+      radial-gradient(ellipse at 100% 0%, rgba(61,220,200,0.05), transparent 40%),
       var(--bg);
     color:var(--text);
     font-family:var(--font-display);
     min-height:100vh;
-    padding:32px 20px 80px;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-    background-size: 28px 28px;
+    padding:32px 20px 90px;
   }
+  .wrap{ max-width:980px; margin:0 auto; }
 
-  .wrap{ max-width:1040px; margin:0 auto; }
-
-  /* ---------- Boot / header ---------- */
-  .boot{
-    font-family:var(--font-mono);
-    font-size:11px;
-    color:var(--teal);
-    letter-spacing:0.02em;
-    min-height:18px;
-    margin-bottom:18px;
-    opacity:0.85;
-  }
-  .boot .cursor{ display:inline-block; width:6px; height:11px; background:var(--teal); margin-left:2px; animation:blink 1s steps(1) infinite; vertical-align:-1px; }
-  @keyframes blink{ 50%{ opacity:0; } }
-
+  /* ---------- header / spec sheet ---------- */
   header{
     border:1px solid var(--line);
     background:linear-gradient(180deg, var(--bg-panel), var(--bg));
-    border-radius:10px;
+    border-radius:4px;
     padding:26px 28px;
-    margin-bottom:28px;
+    margin-bottom:26px;
     position:relative;
     overflow:hidden;
   }
   header::before{
     content:"";
-    position:absolute; inset:0;
-    background:
-      repeating-linear-gradient(90deg, rgba(232,163,61,0.05) 0 1px, transparent 1px 46px);
-    pointer-events:none;
+    position:absolute; inset:0; pointer-events:none;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 40px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 40px);
+  }
+  header::after{
+    content:""; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--copper) 15%, var(--copper) 85%, transparent);
+    opacity:0.6;
   }
   .eyebrow{
-    font-family:var(--font-mono);
-    font-size:11px;
-    color:var(--copper);
-    letter-spacing:0.16em;
-    text-transform:uppercase;
-    margin-bottom:10px;
+    font-family:var(--font-mono); font-size:11px; color:var(--copper);
+    letter-spacing:0.16em; text-transform:uppercase; margin-bottom:10px;
+    display:flex; align-items:center; gap:8px;
   }
-  h1{
-    font-size:clamp(28px, 5vw, 40px);
-    font-weight:700;
-    letter-spacing:-0.01em;
-    margin-bottom:8px;
-  }
-  .sub{ color:var(--text-dim); font-size:14.5px; max-width:54ch; line-height:1.55; }
+  .eyebrow::before{ content:"◆"; font-size:8px; }
+  h1{ font-size:clamp(26px, 5vw, 36px); font-weight:700; letter-spacing:-0.01em; margin-bottom:8px; }
+  .sub{ color:var(--text-dim); font-size:14px; max-width:56ch; line-height:1.55; margin-bottom:20px; }
 
-  .statusbar{
-    display:flex; flex-wrap:wrap; gap:22px;
-    margin-top:22px; padding-top:18px;
-    border-top:1px dashed var(--line);
-    font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);
-  }
-  .statusbar b{ color:var(--text-dim); font-weight:600; }
-  .dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--teal); margin-right:6px; box-shadow:0 0 6px var(--teal); animation:pulse 2.4s ease-in-out infinite; }
-  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
-
-  /* ---------- Board label / add button ---------- */
-  .board-label{
-    font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
-    letter-spacing:0.14em; text-transform:uppercase;
-    margin:0 2px 12px; display:flex; align-items:center; gap:10px;
-  }
-  .board-label::after{ content:""; flex:1; height:1px; background:var(--line); }
-  .add-btn{
-    font-family:var(--font-mono); font-size:13px; line-height:1;
-    width:20px; height:20px; border-radius:5px;
-    border:1px solid var(--line-bright); background:transparent; color:var(--text-faint);
-    cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
-    transition:border-color .15s ease, color .15s ease, background .15s ease;
-  }
-  .add-btn:hover{ border-color:var(--copper); color:var(--copper); background:rgba(232,163,61,0.06); }
-  .hint-small{
-    font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint);
-    margin:-4px 2px 14px;
-  }
-
-  /* ---------- Mind map ---------- */
-  .mindmap-wrap{
-    position:relative;
+  .specsheet{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(110px, 1fr));
+    gap:1px;
+    background:var(--line);
     border:1px solid var(--line);
-    border-radius:10px;
-    background:
-      radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1.2px) 0 0/22px 22px,
-      var(--bg-panel);
+    border-radius:4px;
     overflow:hidden;
-    width:100%;
-    height:min(62vh, 560px);
-    min-height:340px;
-    margin-bottom:28px;
   }
-  .mindmap-canvas{
-    position:absolute;
-    top:0; left:0;
-    width:1320px;
-    height:860px;
-    transform-origin:0 0;
+  .spec{
+    background:var(--bg-panel);
+    padding:12px 14px;
+  }
+  .spec .k{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:5px; }
+  .spec .v{ font-family:var(--font-mono); font-size:19px; font-weight:700; color:var(--text); }
+  .spec .v.copper{ color:var(--copper); }
+  .spec .v.teal{ color:var(--teal); }
+  .spec .v small{ font-size:11px; color:var(--text-faint); font-weight:500; margin-left:2px; }
+
+  /* ---------- toolbar ---------- */
+  .toolbar{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    margin-bottom:22px;
+  }
+  .search-box{
+    flex:1; min-width:180px; position:relative;
+  }
+  .search-box input{
+    width:100%; background:var(--bg-panel); border:1px solid var(--line); border-radius:5px;
+    padding:10px 12px 10px 30px; color:var(--text); font-family:var(--font-mono); font-size:12.5px;
+  }
+  .search-box input:focus{ outline:none; border-color:var(--copper-dim); }
+  .search-box::before{
+    content:"›"; position:absolute; left:11px; top:50%; transform:translateY(-52%);
+    color:var(--text-faint); font-family:var(--font-mono); font-size:14px; pointer-events:none;
+  }
+  .filter-chip{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.03em;
+    padding:9px 13px; border-radius:5px; border:1px solid var(--line);
+    background:var(--bg-panel); color:var(--text-faint); cursor:pointer; white-space:nowrap;
+    transition:border-color .15s, color .15s;
+  }
+  .filter-chip:hover{ color:var(--text-dim); border-color:var(--line-bright); }
+  .filter-chip.active{ color:var(--copper); border-color:var(--copper-dim); background:rgba(232,163,61,0.06); }
+  .add-btn{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.03em;
+    padding:9px 15px; border-radius:5px; border:1px solid var(--copper-dim);
+    background:rgba(232,163,61,0.08); color:var(--copper); cursor:pointer; white-space:nowrap;
+    font-weight:600;
+  }
+  .add-btn:hover{ background:rgba(232,163,61,0.16); }
+
+  /* ---------- rack of modules ---------- */
+  .rack{ display:flex; flex-direction:column; gap:22px; }
+  .module{
+    border:1px solid var(--line);
+    border-radius:6px;
+    background:var(--bg-panel);
+    overflow:hidden;
+  }
+  .module-bus{
+    display:flex; align-items:center; gap:10px;
+    padding:11px 16px;
+    background:linear-gradient(180deg, rgba(61,220,200,0.06), transparent);
+    border-bottom:1px solid var(--line);
+  }
+  .module-bus .jack{
+    width:7px; height:7px; border-radius:50%; background:var(--teal);
+    box-shadow:0 0 6px var(--teal); flex-shrink:0;
+  }
+  .module-bus .jname{
+    font-family:var(--font-mono); font-size:12px; font-weight:700; letter-spacing:0.08em;
+    color:var(--teal); text-transform:uppercase;
+  }
+  .module-bus .jcount{
+    font-family:var(--font-mono); font-size:10px; color:var(--text-faint);
+    margin-left:auto; letter-spacing:0.04em;
+  }
+  .module-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+    gap:1px;
+    background:var(--line);
   }
 
-  .mm-node{
-    position:absolute;
-    width:150px;
+  /* ---------- chip card ---------- */
+  .chip{
     background:var(--bg-card);
-    border:1px solid var(--line);
-    border-radius:9px;
-    padding:10px 12px 9px;
-    cursor:grab;
-    user-select:none;
-    touch-action:none;
-    transition:border-color .15s ease, box-shadow .15s ease;
-    box-shadow:0 2px 10px rgba(0,0,0,0.25);
+    padding:15px 16px 12px;
+    cursor:pointer;
+    position:relative;
+    transition:background .15s ease;
+    display:flex; flex-direction:column; gap:6px;
   }
-  .mm-node:hover{ border-color:var(--copper-dim); }
-  .mm-node.dragging{ cursor:grabbing; border-color:var(--copper); z-index:20; box-shadow:0 8px 22px rgba(0,0,0,0.4); }
-  .mm-node .slot-type{
-    font-family:var(--font-mono); font-size:9px; letter-spacing:0.08em;
-    color:var(--copper); text-transform:uppercase; display:block; margin-bottom:4px;
+  .chip:hover{ background:#1A2129; }
+  .chip-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+  .chip h3{ font-size:14.5px; font-weight:600; line-height:1.3; }
+  .chip .led{ width:6px; height:6px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+  .chip .led.live{ background:var(--teal); box-shadow:0 0 5px var(--teal); }
+  .chip .led.beta{ background:var(--copper); box-shadow:0 0 5px var(--copper); }
+  .chip .led.wip{ background:var(--text-faint); }
+  .chip .desc{ font-size:12px; color:var(--text-dim); line-height:1.5; flex:1; }
+  .chip .foot{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:4px; padding-top:9px; border-top:1px dashed var(--line);
   }
-  .mm-node h3{ font-size:13.5px; font-weight:600; line-height:1.25; margin-bottom:2px; }
-  .mm-node .led{ position:absolute; top:10px; right:10px; width:6px; height:6px; border-radius:50%; }
-  .mm-node .led.live{ background:var(--teal); box-shadow:0 0 6px var(--teal); }
-  .mm-node .led.beta{ background:var(--copper); box-shadow:0 0 6px var(--copper); }
-  .mm-node .led.wip{ background:var(--text-faint); }
-  .mm-node .remove-x{
-    position:absolute; top:-7px; right:-7px; width:18px; height:18px;
+  .chip .status-tag{
+    font-family:var(--font-mono); font-size:9px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--text-faint);
+  }
+  .chip .go{
+    font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); text-decoration:none;
+  }
+  .chip:hover .go{ color:var(--copper); }
+  .chip .pins{
+    position:absolute; bottom:0; left:12px; right:12px; height:4px;
+    display:flex; gap:5px;
+  }
+  .chip .pins span{ flex:1; height:100%; background:var(--line-bright); border-radius:0 0 2px 2px; }
+  .chip .remove-x{
+    position:absolute; top:8px; right:8px; width:18px; height:18px;
     display:none; align-items:center; justify-content:center;
     background:var(--bg); border:1px solid var(--line-bright); border-radius:50%;
     color:var(--text-faint); font-size:11px; cursor:pointer; z-index:5;
   }
-  .mm-node:hover .remove-x{ display:flex; }
-  .mm-node .remove-x:hover{ border-color:var(--red); color:var(--red); }
-  .mm-node .go{
-    font-family:var(--font-mono); font-size:9.5px; color:var(--text-faint);
-    text-decoration:none; display:inline-block; margin-top:4px;
-  }
-  .mm-node .go:hover{ color:var(--teal); }
+  .chip:hover .remove-x{ display:flex; }
+  .chip .remove-x:hover{ border-color:var(--red); color:var(--red); }
 
-  /* category (branch) node */
-  .mm-node.category{
-    width:auto; min-width:88px; max-width:140px;
-    border-radius:20px;
-    border:1.5px solid var(--teal);
-    background:rgba(61,220,200,0.06);
-    text-align:center;
-    padding:9px 16px;
-    z-index:5;
-  }
-  .mm-node.category:hover, .mm-node.category.dragging{ border-color:#6EF2E1; box-shadow:0 6px 16px rgba(61,220,200,0.15); }
-  .mm-node.category .cat-label{
-    font-family:var(--font-mono); font-size:11px; letter-spacing:0.09em;
-    text-transform:uppercase; color:var(--teal); font-weight:700;
-  }
-  .mm-node.category .cat-count{
-    display:block; font-family:var(--font-mono); font-size:9px; color:var(--text-faint);
-    margin-top:2px; letter-spacing:0.06em;
+  .empty-state{
+    text-align:center; padding:48px 20px; color:var(--text-faint);
+    font-family:var(--font-mono); font-size:12.5px;
   }
 
-  /* center node */
-  .mm-node.center{
-    width:92px; height:92px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center; flex-direction:column;
-    background:radial-gradient(circle at 35% 30%, #2a2015, var(--bg-card));
-    border:1.5px solid var(--copper);
-    cursor:default; z-index:10;
-    box-shadow:0 0 0 6px rgba(232,163,61,0.06), 0 6px 20px rgba(0,0,0,0.4);
-  }
-  .mm-node.center span{ font-family:var(--font-mono); font-weight:700; font-size:19px; letter-spacing:0.03em; color:var(--copper); }
-  .mm-node.center small{ font-family:var(--font-mono); font-size:8px; color:var(--text-faint); letter-spacing:0.1em; margin-top:2px; }
-
-  /* ---------- Add form (modal-lite) ---------- */
+  /* ---------- overlay / add form ---------- */
   .overlay{
-    position:fixed; inset:0; background:rgba(8,10,14,0.72);
+    position:fixed; inset:0; background:rgba(6,8,11,0.75);
     display:none; align-items:center; justify-content:center; padding:20px; z-index:50;
   }
   .overlay.open{ display:flex; }
   .panel{
-    background:var(--bg-panel); border:1px solid var(--line-bright); border-radius:10px;
+    background:var(--bg-panel); border:1px solid var(--line-bright); border-radius:6px;
     width:100%; max-width:420px; padding:24px;
   }
   .panel h2{ font-size:16px; margin-bottom:4px; }
@@ -225,7 +217,7 @@
   .field{ margin-bottom:14px; }
   .field label{ display:block; font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px; }
   .field input, .field select, .field textarea{
-    width:100%; background:var(--bg); border:1px solid var(--line); border-radius:6px;
+    width:100%; background:var(--bg); border:1px solid var(--line); border-radius:5px;
     padding:10px 11px; color:var(--text); font-family:var(--font-display); font-size:13.5px;
   }
   .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--teal); }
@@ -233,7 +225,7 @@
   .panel-actions{ display:flex; gap:10px; margin-top:18px; }
   .btn{
     font-family:var(--font-mono); font-size:12px; letter-spacing:0.04em;
-    padding:10px 16px; border-radius:6px; border:1px solid var(--line-bright);
+    padding:10px 16px; border-radius:5px; border:1px solid var(--line-bright);
     background:transparent; color:var(--text-dim); cursor:pointer; flex:1;
   }
   .btn.primary{ background:var(--copper); border-color:var(--copper); color:#161206; font-weight:600; }
@@ -242,12 +234,12 @@
 
   footer{
     text-align:center; font-family:var(--font-mono); font-size:10.5px;
-    color:var(--text-faint); margin-top:10px; letter-spacing:0.04em;
+    color:var(--text-faint); margin-top:26px; letter-spacing:0.04em;
   }
 
   .toast{
     position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
-    background:var(--bg-panel); border:1px solid var(--line-bright); border-radius:8px;
+    background:var(--bg-panel); border:1px solid var(--line-bright); border-radius:6px;
     padding:12px 14px 12px 16px; display:flex; align-items:center; gap:14px;
     font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
     box-shadow:0 8px 24px rgba(0,0,0,0.4);
@@ -262,42 +254,39 @@
   }
   .toast #toastUndo:hover{ background:rgba(61,220,200,0.1); }
 
-  @media (prefers-reduced-motion: reduce){
-    .dot, .led.live, .cursor{ animation:none !important; }
-  }
-
-  @media (max-width:640px){
-    .mindmap-wrap{ height:min(50vh, 420px); min-height:300px; }
+  @media (max-width:520px){
+    .module-grid{ grid-template-columns:1fr; }
+    .specsheet{ grid-template-columns:repeat(2, 1fr); }
   }
 </style>
 </head>
 <body>
 
 <div class="wrap">
-
-  <div class="boot" id="bootLine">&gt; initializing hub<span class="cursor"></span></div>
-
   <header>
     <div class="eyebrow">TP // COMMAND HUB</div>
-    <h1>All builds. One board.</h1>
-    <p class="sub">Every site, tool, and dashboard you've shipped — grouped into branches, mapped out from one center. Drag to rearrange, tap to open, add a new branch or node any time.</p>
-    <div class="statusbar">
-      <span><span class="dot"></span><b id="liveCount">0</b> live</span>
-      <span>NODES: <b id="filledCount">0</b></span>
-      <span>BRANCHES: <b id="branchCount">0</b></span>
+    <h1>Every build, one board.</h1>
+    <p class="sub">All the sites, dashboards, and tools you've shipped — racked by category, live status per module. Search, filter, open, or install a new one.</p>
+    <div class="specsheet">
+      <div class="spec"><div class="k">Nodes</div><div class="v" id="specNodes">0</div></div>
+      <div class="spec"><div class="k">Live</div><div class="v teal" id="specLive">0</div></div>
+      <div class="spec"><div class="k">Beta</div><div class="v copper" id="specBeta">0</div></div>
+      <div class="spec"><div class="k">Branches</div><div class="v" id="specBranches">0</div></div>
     </div>
   </header>
 
-  <div class="board-label">Mind map <button class="add-btn" id="addSlot" title="Install component">+</button></div>
-  <p class="hint-small">// drag a node to rearrange · tap a node to open it · teal pills are branches</p>
-
-  <div class="mindmap-wrap" id="mmWrap">
-    <div class="mindmap-canvas" id="mmCanvas">
-      <svg id="mmLines" width="1320" height="860" style="position:absolute; top:0; left:0; pointer-events:none;"></svg>
-      <div class="mm-node center" id="mmCenter"><span>TP</span><small>HUB</small></div>
-    </div>
+  <div class="toolbar">
+    <div class="search-box"><input type="text" id="searchInput" placeholder="search tools..."></div>
+    <button class="filter-chip active" data-filter="all">All</button>
+    <button class="filter-chip" data-filter="live">Live</button>
+    <button class="filter-chip" data-filter="beta">Beta</button>
+    <button class="filter-chip" data-filter="wip">In progress</button>
+    <button class="add-btn" id="addSlot">+ Install</button>
   </div>
 
+  <div class="rack" id="rack"></div>
+
+  <footer>TP HUB · BOARD LAST FLASHED <span id="flashDate"></span></footer>
 </div>
 
 <div class="overlay" id="overlay">
@@ -336,15 +325,12 @@
   </div>
 </div>
 
-<footer>TAMMY PADAL · BOARD LAST FLASHED <span id="flashDate"></span></footer>
-
 <div class="toast" id="toast">
   <span id="toastMsg"></span>
   <button id="toastUndo">Undo</button>
 </div>
 
 <script>
-  // ---- Seed components: edit / add more any time. "category" is the branch name ----
   const SEED = [
     { name:"Content Dashboard", url:"https://content-dashboard-2ki.pages.dev/", category:"Content", status:"live", desc:"2026 performance tracker." },
     { name:"Thumbnail Maker", url:"https://content-thumbnail-maker.pages.dev/", category:"Content", status:"live", desc:"Auto-scaling caption graphics." },
@@ -357,177 +343,121 @@
     { name:"Roast My Desktops", url:"https://roast-my-desktops.pages.dev/", category:"Hardware", status:"live", desc:"Fun desktop-roasting tool." },
   ];
 
-  const STORAGE_KEY = "tp_hub_components_v3";
-  const POS_KEY = "tp_hub_positions_v3";
+  const STORAGE_KEY = "tp_hub_components_v4";
+  let components = [];
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    components = raw ? JSON.parse(raw) : SEED;
+  }catch(e){ components = SEED; }
 
-  function loadComponents(){
-    try{
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw) return JSON.parse(raw);
-    }catch(e){}
-    return SEED;
-  }
-  function saveComponents(list){
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){}
-  }
-  function loadPositions(){
-    try{
-      const raw = localStorage.getItem(POS_KEY);
-      if(raw) return JSON.parse(raw);
-    }catch(e){}
-    return {};
-  }
-  function savePositions(pos){
-    try{ localStorage.setItem(POS_KEY, JSON.stringify(pos)); }catch(e){}
-  }
-  function slug(s){
-    return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
-  }
+  function saveComponents(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(components)); }catch(e){} }
 
-  let components = loadComponents();
-  let positions = loadPositions();
+  let activeFilter = "all";
+  let searchTerm = "";
   let undoData = null;
   let undoTimer = null;
 
-  const canvas = document.getElementById("mmCanvas");
-  const svg = document.getElementById("mmLines");
-  const wrap = document.getElementById("mmWrap");
+  const rack = document.getElementById("rack");
   const overlay = document.getElementById("overlay");
-  const CW = 1320, CH = 860;
-  const CX = CW / 2, CY = CH / 2;
-  const NODE_W = 150, NODE_H = 66;
-  const CAT_W = 110, CAT_H = 40;
-  const RADIUS_1 = Math.min(CW, CH) * 0.27;
-  const RADIUS_2 = Math.min(CW, CH) * 0.23;
 
-  function nodeCenter(el){
-    return {
-      x: parseFloat(el.style.left) + el.offsetWidth / 2,
-      y: parseFloat(el.style.top) + el.offsetHeight / 2
-    };
+  function statusLabel(s){
+    return s === "live" ? "Live" : s === "beta" ? "Beta" : "In progress";
   }
 
-  function edgePointRect(el, towardX, towardY){
-    const c = nodeCenter(el);
-    const halfW = el.offsetWidth / 2, halfH = el.offsetHeight / 2;
-    const dx = towardX - c.x, dy = towardY - c.y;
-    if(dx === 0 && dy === 0) return c;
-    const scaleX = dx !== 0 ? halfW / Math.abs(dx) : Infinity;
-    const scaleY = dy !== 0 ? halfH / Math.abs(dy) : Infinity;
-    const s = Math.min(scaleX, scaleY);
-    return { x: c.x + dx * s, y: c.y + dy * s };
+  function pinCount(catLength){
+    return Math.min(Math.max(catLength, 3), 6);
   }
 
-  function edgePointCircle(el, towardX, towardY){
-    const c = nodeCenter(el);
-    const r = el.offsetWidth / 2;
-    const dx = towardX - c.x, dy = towardY - c.y;
-    const len = Math.sqrt(dx * dx + dy * dy) || 1;
-    return { x: c.x + (dx / len) * r, y: c.y + (dy / len) * r };
-  }
+  function render(){
+    rack.innerHTML = "";
 
-  function drawLine(a, b, color, width, opacity){
-    const dx = b.x - a.x, dy = b.y - a.y;
-    const len = Math.sqrt(dx * dx + dy * dy) || 1;
-    const perpX = -dy / len, perpY = dx / len;
-    const bend = len * 0.16;
-    const midX = (a.x + b.x) / 2 + perpX * bend;
-    const midY = (a.y + b.y) / 2 + perpY * bend;
-
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", `M ${a.x} ${a.y} Q ${midX} ${midY} ${b.x} ${b.y}`);
-    path.setAttribute("fill", "none");
-    path.setAttribute("style", `stroke:${color}; stroke-width:${width}; opacity:${opacity}; stroke-linecap:round;`);
-    svg.appendChild(path);
-  }
-
-  function fitView(){
-    const nodes = document.querySelectorAll(".mm-node");
-    if(!nodes.length) return;
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    nodes.forEach(el => {
-      const x = parseFloat(el.style.left), y = parseFloat(el.style.top);
-      const w = el.offsetWidth, h = el.offsetHeight;
-      minX = Math.min(minX, x); minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x + w); maxY = Math.max(maxY, y + h);
-    });
-    const pad = 46;
-    minX -= pad; minY -= pad; maxX += pad; maxY += pad;
-    const contentW = maxX - minX, contentH = maxY - minY;
-    const wrapW = wrap.clientWidth, wrapH = wrap.clientHeight;
-    if(!wrapW || !wrapH || !contentW || !contentH) return;
-    const scale = Math.min(wrapW / contentW, wrapH / contentH, 1.35);
-    const translateX = (wrapW - contentW * scale) / 2 - minX * scale;
-    const translateY = (wrapH - contentH * scale) / 2 - minY * scale;
-    canvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-  }
-
-  function redrawLines(){
-    svg.innerHTML = "";
-    const centerEl = document.getElementById("mmCenter");
-    const c = nodeCenter(centerEl);
-
-    document.querySelectorAll(".mm-node.category").forEach(catEl => {
-      const catC = nodeCenter(catEl);
-      const p1 = edgePointCircle(centerEl, catC.x, catC.y);
-      const p2 = edgePointRect(catEl, c.x, c.y);
-      drawLine(p1, p2, "var(--copper)", 1.8, 0.55);
+    const byCat = {};
+    const catOrder = [];
+    components.forEach(c => {
+      if(!byCat[c.category]){ byCat[c.category] = []; catOrder.push(c.category); }
+      byCat[c.category].push(c);
     });
 
-    document.querySelectorAll(".mm-node.leaf").forEach(leafEl => {
-      const catEl = document.querySelector(`.mm-node.category[data-id="${leafEl.dataset.parent}"]`);
-      if(!catEl) return;
-      const catC = nodeCenter(catEl);
-      const leafC = nodeCenter(leafEl);
-      const p1 = edgePointRect(catEl, leafC.x, leafC.y);
-      const p2 = edgePointRect(leafEl, catC.x, catC.y);
-      const color = leafEl.dataset.status === "live" ? "var(--teal)" : "var(--copper-dim)";
-      drawLine(p1, p2, color, 1.3, 0.42);
-    });
-  }
+    const term = searchTerm.trim().toLowerCase();
+    let visibleTotal = 0;
 
-  function makeDraggable(el){
-    let sx, sy, ox, oy, moved, dragging;
+    catOrder.forEach(catName => {
+      const items = byCat[catName].filter(c => {
+        const matchesFilter = activeFilter === "all" || c.status === activeFilter;
+        const matchesSearch = !term || c.name.toLowerCase().includes(term) || c.desc.toLowerCase().includes(term);
+        return matchesFilter && matchesSearch;
+      });
+      if(!items.length) return;
+      visibleTotal += items.length;
 
-    el.addEventListener("pointerdown", (e) => {
-      if(e.target.closest(".remove-x") || e.target.closest(".go")) return;
-      dragging = true; moved = false;
-      sx = e.clientX; sy = e.clientY;
-      ox = parseFloat(el.style.left); oy = parseFloat(el.style.top);
-      el.setPointerCapture(e.pointerId);
-      el.classList.add("dragging");
+      const mod = document.createElement("div");
+      mod.className = "module";
+      mod.innerHTML = `
+        <div class="module-bus">
+          <span class="jack"></span>
+          <span class="jname">${catName}</span>
+          <span class="jcount">${items.length} node${items.length > 1 ? "s" : ""}</span>
+        </div>
+        <div class="module-grid"></div>
+      `;
+      const grid = mod.querySelector(".module-grid");
+
+      items.forEach(c => {
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        const pins = Array.from({length: pinCount(items.length)}).map(() => "<span></span>").join("");
+        chip.innerHTML = `
+          <div class="remove-x" title="Remove">×</div>
+          <div class="chip-top">
+            <h3>${c.name}</h3>
+            <span class="led ${c.status}"></span>
+          </div>
+          <div class="desc">${c.desc || ""}</div>
+          <div class="foot">
+            <span class="status-tag">${statusLabel(c.status)}</span>
+            <span class="go">open →</span>
+          </div>
+          <div class="pins">${pins}</div>
+        `;
+        chip.addEventListener("click", (e) => {
+          if(e.target.closest(".remove-x")) return;
+          window.open(c.url, "_blank", "noopener");
+        });
+        chip.querySelector(".remove-x").addEventListener("click", (e) => {
+          e.stopPropagation();
+          const idx = components.indexOf(c);
+          undoData = { component: c, index: idx };
+          components.splice(idx, 1);
+          saveComponents();
+          render();
+          showToast(`Removed "${c.name}"`);
+        });
+        grid.appendChild(chip);
+      });
+
+      rack.appendChild(mod);
     });
 
-    el.addEventListener("pointermove", (e) => {
-      if(!dragging) return;
-      const dx = e.clientX - sx, dy = e.clientY - sy;
-      if(Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
-      let nx = ox + dx, ny = oy + dy;
-      nx = Math.max(0, Math.min(CW - el.offsetWidth, nx));
-      ny = Math.max(0, Math.min(CH - el.offsetHeight, ny));
-      el.style.left = nx + "px";
-      el.style.top = ny + "px";
-      redrawLines();
-    });
+    if(!visibleTotal){
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = term || activeFilter !== "all" ? "// no matches on this board" : "// board is empty — install a component";
+      rack.appendChild(empty);
+    }
 
-    el.addEventListener("pointerup", (e) => {
-      dragging = false;
-      el.classList.remove("dragging");
-      if(moved){
-        positions[el.dataset.id] = { x: parseFloat(el.style.left), y: parseFloat(el.style.top) };
-        savePositions(positions);
-        fitView();
-        redrawLines();
-      } else {
-        const url = el.dataset.url;
-        if(url) window.open(url, "_blank", "noopener");
-      }
-    });
+    populateCategoryList(catOrder);
+    updateStatus(catOrder.length);
   }
 
   function populateCategoryList(catOrder){
-    const dl = document.getElementById("cat-list");
-    dl.innerHTML = catOrder.map(c => `<option value="${c}"></option>`).join("");
+    document.getElementById("cat-list").innerHTML = catOrder.map(c => `<option value="${c}"></option>`).join("");
+  }
+
+  function updateStatus(branchCount){
+    document.getElementById("specNodes").textContent = components.length;
+    document.getElementById("specLive").textContent = components.filter(c => c.status === "live").length;
+    document.getElementById("specBeta").textContent = components.filter(c => c.status === "beta").length;
+    document.getElementById("specBranches").textContent = branchCount;
   }
 
   function showToast(msg){
@@ -535,112 +465,32 @@
     document.getElementById("toastMsg").textContent = msg;
     toast.classList.add("show");
     clearTimeout(undoTimer);
-    undoTimer = setTimeout(() => {
-      toast.classList.remove("show");
-      undoData = null;
-    }, 6000);
+    undoTimer = setTimeout(() => { toast.classList.remove("show"); undoData = null; }, 6000);
   }
 
   document.getElementById("toastUndo").addEventListener("click", () => {
     if(!undoData) return;
     components.splice(undoData.index, 0, undoData.component);
-    if(undoData.pos) positions[undoData.leafId] = undoData.pos;
-    saveComponents(components);
-    savePositions(positions);
+    saveComponents();
     render();
     document.getElementById("toast").classList.remove("show");
     clearTimeout(undoTimer);
     undoData = null;
   });
 
-  function render(){
-    document.querySelectorAll(".mm-node.category, .mm-node.leaf").forEach(n => n.remove());
-
-    const catOrder = [];
-    const byCat = {};
-    components.forEach(c => {
-      if(!byCat[c.category]){ byCat[c.category] = []; catOrder.push(c.category); }
-      byCat[c.category].push(c);
+  document.querySelectorAll(".filter-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      activeFilter = chip.dataset.filter;
+      render();
     });
+  });
 
-    const nCats = catOrder.length || 1;
-    const catMeta = {};
-
-    catOrder.forEach((catName, i) => {
-      const angle = (i / nCats) * Math.PI * 2 - Math.PI / 2;
-      const catId = "cat_" + slug(catName);
-      const pos = positions[catId] || {
-        x: CX + RADIUS_1 * Math.cos(angle) - CAT_W / 2,
-        y: CY + RADIUS_1 * Math.sin(angle) - CAT_H / 2
-      };
-      const el = document.createElement("div");
-      el.className = "mm-node category";
-      el.dataset.id = catId;
-      el.style.left = pos.x + "px";
-      el.style.top = pos.y + "px";
-      el.innerHTML = `<span class="cat-label">${catName}</span><span class="cat-count">${byCat[catName].length} node${byCat[catName].length > 1 ? "s" : ""}</span>`;
-      canvas.appendChild(el);
-      makeDraggable(el);
-      catMeta[catName] = { angle, id: catId };
-    });
-
-    catOrder.forEach(catName => {
-      const items = byCat[catName];
-      const { angle, id: catId } = catMeta[catName];
-      const k = items.length;
-      const spread = 0.38;
-      const startOffset = -((k - 1) / 2) * spread;
-
-      items.forEach((c, j) => {
-        const childAngle = angle + startOffset + j * spread;
-        const leafId = catId + "__" + slug(c.name);
-        const pos = positions[leafId] || {
-          x: CX + (RADIUS_1 + RADIUS_2) * Math.cos(childAngle) - NODE_W / 2,
-          y: CY + (RADIUS_1 + RADIUS_2) * Math.sin(childAngle) - NODE_H / 2
-        };
-        const el = document.createElement("div");
-        el.className = "mm-node leaf";
-        el.dataset.id = leafId;
-        el.dataset.parent = catId;
-        el.dataset.url = c.url;
-        el.dataset.status = c.status;
-        el.style.left = Math.max(0, Math.min(CW - NODE_W, pos.x)) + "px";
-        el.style.top = Math.max(0, Math.min(CH - NODE_H, pos.y)) + "px";
-        el.innerHTML = `
-          <div class="remove-x" title="Remove">×</div>
-          <span class="led ${c.status}"></span>
-          <span class="slot-type">${catName}</span>
-          <h3>${c.name}</h3>
-          <a class="go" href="${c.url}" target="_blank" rel="noopener">open →</a>
-        `;
-        canvas.appendChild(el);
-        makeDraggable(el);
-
-        el.querySelector(".remove-x").addEventListener("click", (e) => {
-          e.stopPropagation();
-          const idx = components.indexOf(c);
-          undoData = { component: c, index: idx, leafId, pos: positions[leafId] || null };
-          components.splice(idx, 1);
-          saveComponents(components);
-          delete positions[leafId];
-          savePositions(positions);
-          render();
-          showToast(`Removed "${c.name}"`);
-        });
-      });
-    });
-
-    populateCategoryList(catOrder);
-    redrawLines();
-    fitView();
-    updateStatus(catOrder.length);
-  }
-
-  function updateStatus(branchCount){
-    document.getElementById("filledCount").textContent = components.length;
-    document.getElementById("liveCount").textContent = components.filter(c => c.status === "live").length;
-    document.getElementById("branchCount").textContent = branchCount;
-  }
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    searchTerm = e.target.value;
+    render();
+  });
 
   document.getElementById("addSlot").addEventListener("click", () => overlay.classList.add("open"));
   document.getElementById("cancelBtn").addEventListener("click", () => overlay.classList.remove("open"));
@@ -655,26 +505,15 @@
     if(!name || !url) return;
 
     components.push({ name, url, category, status, desc });
-    saveComponents(components);
+    saveComponents();
     render();
 
     ["f-name","f-url","f-category","f-desc"].forEach(id => document.getElementById(id).value = "");
     overlay.classList.remove("open");
   });
 
-  const centerEl = document.getElementById("mmCenter");
-  centerEl.style.left = (CX - 46) + "px";
-  centerEl.style.top = (CY - 46) + "px";
-
   render();
-
-  window.addEventListener("resize", () => { fitView(); redrawLines(); });
-
   document.getElementById("flashDate").textContent = new Date().getFullYear();
-
-  setTimeout(() => {
-    document.getElementById("bootLine").innerHTML = "&gt; " + components.length + " components online<span class=\"cursor\"></span>";
-  }, 700);
 </script>
 
 </body>
